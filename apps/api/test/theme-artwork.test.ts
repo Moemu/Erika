@@ -11,7 +11,6 @@ const data = { fullName: "Some/Project", name: "Project", description: "A **fixe
 const provider: GitHubProvider = {
   getRepo: async () => ({ data: { ...data }, freshness: "fresh", version: "v1" }),
   getLatestRelease: async () => null,
-  stats: () => ({ snapshots: 0, notFound: 0, backoff: 0, pausedForMs: 0 }),
 };
 
 function presets() {

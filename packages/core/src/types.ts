@@ -73,7 +73,6 @@ export interface IconBox {
 }
 
 export interface IconSlot extends IconBox {
-  sources: string[];
   /** Explicit themes share this opaque-artwork inset; incompatible backdrops
    * also receive rounded corners. Ratios of the active image box. */
   frame?: { padding: number; radius: number };
@@ -145,22 +144,12 @@ export interface ThemeColors {
   stats?: string;
 }
 
-export interface TemplateCapabilities {
-  autoFit: boolean;
-  manualLineBreaks: boolean;
-  wordInitialAccent: boolean;
-  accentRanges: boolean;
-  /** the template declares metadata zones (topline/footer) */
-  metadata: boolean;
-}
-
 export interface Template {
   schemaVersion: number;
   id: string;
   version: number;
-  /** inherit slots/capabilities/themes from a base template */
+  /** inherit slots/themes from a base template */
   extends?: string;
-  capabilities: TemplateCapabilities;
   canvas: { width: number; height: number };
   defaults: { theme: string; scale: number };
   /** ratio layout (data files); the loader expands it into absolute slots */

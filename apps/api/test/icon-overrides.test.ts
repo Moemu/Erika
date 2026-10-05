@@ -21,7 +21,6 @@ function makeApp(avatar: Buffer) {
           private: false,
         },
       }),
-      stats: () => ({ snapshots: 0, notFound: 0, backoff: 0, pausedForMs: 0 }),
     },
     imageFetcher: async () => avatar,
   });

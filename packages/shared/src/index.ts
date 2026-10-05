@@ -65,7 +65,7 @@ export const bannerQuerySchema = z.object({
   /** lower bound keeps the smallest render at a sane size (300x180 on classic) */
   scale: z.coerce.number().gte(0.1).lte(LIMITS.scaleMax).optional(),
   lang: z.enum(["en", "zh"]).optional(),
-  fresh: z.string().optional(),
+  fresh: z.enum(["1"]).optional(),
 });
 
 export type BannerQuery = z.infer<typeof bannerQuerySchema>;
@@ -105,9 +105,4 @@ export function normalizeQuery(q: BannerQuery): NormalizedQuery {
     iconRound: q.iconRound,
     fresh: q.fresh,
   };
-}
-
-export function parseMetaFields(meta: string[] | undefined): MetaField[] {
-  const list = meta ?? [];
-  return list.filter((s): s is MetaField => (META_FIELDS as readonly string[]).includes(s));
 }

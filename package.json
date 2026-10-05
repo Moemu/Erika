@@ -19,9 +19,7 @@
   "devDependencies": {
     "typescript": "^5.6.0",
     "@types/node": "^24.0.0",
-    "@erika/providers": "workspace:*",
     "@erika/core": "workspace:*",
-    "hono": "^4.6.0",
     "@erika/api": "workspace:*"
   }
 }

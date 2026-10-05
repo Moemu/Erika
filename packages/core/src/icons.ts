@@ -4,7 +4,7 @@
  * doc 10.1: byte cap, decode pixel cap, timeout). Shared by the API and the
  * CLI (render-live) so both produce the same default artwork. */
 
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { loadImage } from "@napi-rs/canvas";
 import { LIMITS } from "@erika/shared";
 import type { Preset } from "./types.js";
@@ -29,9 +29,6 @@ async function validateImage(buf: Buffer): Promise<Buffer> {
 export interface ImageFetcher {
   (url: string): Promise<Buffer>;
 }
-
-/** @deprecated use ImageFetcher */
-export type AvatarFetcher = ImageFetcher;
 
 /** Byte/pixel-capped fetcher for GitHub-hosted images: avatars and the subject
  * repo's own icon (raw.githubusercontent.com). Both live on GitHub-controlled
@@ -125,7 +122,6 @@ export function repoIconUrlsFor(s: {
 
 export interface ResolvedIcon {
   kind: "repo" | "avatar" | "builtin";
-  url?: string;
   buffer?: Buffer;
 }
 
@@ -145,7 +141,7 @@ export async function resolveIconChain(order: string[], source: {
         for (const url of source.repoIconUrls) {
           try {
             const buffer = await source.imageFetcher(url);
-            return { kind: "repo", url, buffer: await validateImage(buffer) };
+            return { kind: "repo", buffer: await validateImage(buffer) };
           } catch (err) {
             source.log?.(`repo icon candidate failed (${url}): ${err instanceof Error ? err.message : err}`);
           }
@@ -162,14 +158,6 @@ export async function resolveIconChain(order: string[], source: {
     }
   }
   return null;
-}
-
-export function readBuiltinIcon(path: string): Buffer | null {
-  try {
-    return readFileSync(path);
-  } catch {
-    return null;
-  }
 }
 
 // ---- background colour capture (the PSD technique, automated) ----

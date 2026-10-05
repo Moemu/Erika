@@ -187,6 +187,11 @@ export function createApp(deps: ApiDeps) {
     // grokbot. An explicit avatar always takes the avatar path (its preset
     // template choice was written for the project's own icon).
     const iconSource: IconSource = q.icon ?? "auto";
+    // iconPath names a location inside the subject repo: it is meaningless (and
+    // previously silently ignored) for the avatar/builtin sources
+    if (q.iconPath && iconSource !== "auto") {
+      return c.json({ error: "iconPath only applies when icon is auto (default)" }, 400);
+    }
     const requestedId =
       templateId ?? (iconSource === "avatar" ? "avatar" : preset?.template ?? "grokbot");
     let template;
@@ -363,7 +368,7 @@ export function createApp(deps: ApiDeps) {
               iconFit: q.iconFit,
               iconRound: q.iconRound === undefined ? undefined : q.iconRound === "1",
             },
-            iconOverride: icon ? { url: icon.url, buffer: icon.buffer, kind: icon.kind } : undefined,
+            iconOverride: icon ? { buffer: icon.buffer, kind: icon.kind } : undefined,
             fontDirs: [fontsDir],
             format,
           });
@@ -430,7 +435,7 @@ GET /v1/banner/:owner/:repo/:template.webp</code></pre>
               { name: "iconRound", in: "query", schema: { enum: ["0", "1"] } },
               { name: "scale", in: "query", schema: { type: "number", minimum: LIMITS.scaleMin, maximum: LIMITS.scaleMax } },
               { name: "lang", in: "query", schema: { enum: ["en", "zh"] } },
-              { name: "fresh", in: "query", schema: { type: "string", example: "1" } },
+              { name: "fresh", in: "query", schema: { enum: ["1"], example: "1" } },
             ],
             responses: {
               "200": { description: "Banner image", content: { "image/webp": {}, "image/png": {} } },

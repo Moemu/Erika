@@ -23,18 +23,6 @@ function repoBody(overrides: Record<string, unknown> = {}) {
   };
 }
 
-/** Fake fetch with scripted responses and call recording. */
-function makeFetch(script: Array<(url: string, init?: RequestInit) => Response>) {
-  const calls: Array<{ url: string; init?: RequestInit }> = [];
-  const impl = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-    calls.push({ url: String(url), init });
-    const next = script.shift();
-    if (!next) throw new Error("unexpected extra fetch call");
-    return next(String(url), init);
-  }) as unknown as typeof fetch;
-  return { impl: impl as typeof fetch, calls };
-}
-
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe("createGitHubProvider", () => {
@@ -371,11 +359,8 @@ describe("rate-limit handling regressions", () => {
     // a different repo must NOT hit the network during the pause
     await expect(provider.getRepo("B", "b")).rejects.toMatchObject({ kind: "rate-limited" });
     expect(calls).toBe(1);
-    // but an existing snapshot is still served (degradation path)
-    clock += 601_000; // pause over
-    const { impl } = makeFetch([() => ghResponse(repoBody())]);
-    // replace internals indirectly: new provider shares nothing; instead assert via stats
-    expect(provider.stats().pausedForMs).toBeLessThanOrEqual(600_000);
+    // pause expiry is covered by the SWR/backoff tests: once pausedUntil passes,
+    // the next getRepo revalidation attempts the network again
   });
 
   it("bounded maps evict oldest entries over cap", async () => {
@@ -389,10 +374,12 @@ describe("rate-limit handling regressions", () => {
     });
     await provider.getRepo("A", "a");
     await provider.getRepo("B", "b");
-    await provider.getRepo("C", "c");
-    expect(provider.stats().snapshots).toBe(2); // A evicted
-    await provider.getRepo("A", "a"); // refetch A (network) -> B evicted
+    await provider.getRepo("C", "c"); // cap 2: A evicted
+    await provider.getRepo("A", "a"); // A must refetch from the network -> B evicted
     expect(calls).toBe(4);
-    expect(provider.stats().snapshots).toBe(2);
+    await provider.getRepo("C", "c"); // still cached: no network
+    expect(calls).toBe(4);
+    await provider.getRepo("B", "b"); // evicted: network again
+    expect(calls).toBe(5);
   });
 });

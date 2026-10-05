@@ -5,11 +5,7 @@ export interface TemplateInfo {
   id: string;
   version: number;
   themes: string[];
-  capabilities: Record<string, boolean>;
-  formats: string[];
   canvas: { width: number; height: number };
-  /** icon sources this template is meant for */
-  sources: string[];
   /** metadata fields the template declares */
   metaFields: string[];
   defaultMetaFields?: string[];
@@ -102,9 +98,9 @@ export type ParamState = {
   apiBase: string;
 };
 
-export function bannerPath(state: ParamState): string | null {
-  const { owner, repo } = state;
-  if (!owner.trim() || !repo.trim()) return null;
+/** Banner query params shared by the banner URL and the shareable page URL
+ * (one source of truth: adding a param here updates both). */
+export function bannerQueryParams(state: ParamState): URLSearchParams {
   const params = new URLSearchParams();
   if (state.theme) params.set("theme", state.theme);
   if (state.accent) params.set("accent", state.accent);
@@ -117,7 +113,13 @@ export function bannerPath(state: ParamState): string | null {
   if (state.iconRound) params.set("iconRound", state.iconRound);
   if (state.meta !== null) params.set("meta", state.meta);
   if (state.lang) params.set("lang", state.lang);
-  const qs = params.toString();
+  return params;
+}
+
+export function bannerPath(state: ParamState): string | null {
+  const { owner, repo } = state;
+  if (!owner.trim() || !repo.trim()) return null;
+  const qs = bannerQueryParams(state).toString();
   const query = qs ? `?${qs}` : "";
   // the format extension always terminates the path (API contract)
   const base = `/v1/banner/${encodeURIComponent(owner.trim())}/${encodeURIComponent(repo.trim())}`;

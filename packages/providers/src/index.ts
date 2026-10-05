@@ -107,7 +107,6 @@ export interface GitHubProvider {
   /** latest release tag, or null when the repo has no releases; never throws
    * for "no releases" (a 404 here is not a missing repository) */
   getLatestRelease(owner: string, repo: string): Promise<string | null>;
-  stats(): { snapshots: number; notFound: number; backoff: number; pausedForMs: number };
 }
 
 export function createGitHubProvider(options: ProviderOptions = {}): GitHubProvider {
@@ -375,14 +374,5 @@ export function createGitHubProvider(options: ProviderOptions = {}): GitHubProvi
     },
 
     getLatestRelease,
-
-    stats() {
-      return {
-        snapshots: snapshots.size,
-        notFound: notFoundUntil.size,
-        backoff: backoffUntil.size,
-        pausedForMs: Math.max(0, pausedUntil - now()),
-      };
-    },
   };
 }

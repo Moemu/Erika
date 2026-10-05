@@ -147,7 +147,7 @@ export async function renderLiveCommand(
     "templates-dir"?: string;
   },
   deps: Deps,
-  options: { fetchImpl?: typeof fetch; avatarFetchImpl?: typeof fetch } = {},
+  options: { fetchImpl?: typeof fetch } = {},
 ): Promise<number> {
   if (!values.owner || !values.repo) throw new Error("--owner and --repo are required");
   const token = values.token ?? process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN;
@@ -183,7 +183,7 @@ export async function renderLiveCommand(
     : await resolveIconChain(["repo", "builtin"], {
         repoIconUrls,
         builtinPath: builtinIconPathFor(deps.templatesDir, values.theme),
-        imageFetcher: createImageFetcher({ fetchImpl: options.avatarFetchImpl }),
+        imageFetcher: createImageFetcher({ fetchImpl: options.fetchImpl }),
         log: (msg) => console.error(`[icons] ${msg}`),
       });
   const format = (values.format ?? extname(values.out ?? ".webp").slice(1)) as "png" | "webp";
@@ -201,7 +201,7 @@ export async function renderLiveCommand(
       description: values.description,
       meta: values.meta !== undefined ? values.meta.split(",").map((f) => f.trim()).filter(Boolean) : undefined,
     },
-    iconOverride: icon ? { url: icon.url, buffer: icon.buffer, kind: icon.kind } : undefined,
+    iconOverride: icon ? { buffer: icon.buffer, kind: icon.kind } : undefined,
     fontDirs,
     fontOverride: values.font,
     format: format === "png" ? "png" : "webp",

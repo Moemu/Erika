@@ -86,7 +86,7 @@ describe("render-live", () => {
     const code = await renderLiveCommand(
       { owner: "Some", repo: "One", out, scale: "0.5" },
       { templatesDir: DEFAULT_TEMPLATES_DIR, presetsPath: DEFAULT_PRESETS_PATH },
-      { fetchImpl, avatarFetchImpl: fetchImpl },
+      { fetchImpl },
     );
     expect(code).toBe(0);
     const bytes = readFileSync(out);
@@ -116,7 +116,7 @@ describe("render-live", () => {
     }) as typeof fetch;
     await renderLiveCommand(
       { owner: "Some", repo: "One", theme: "light", out: join(dir, "light.webp") },
-      { templatesDir: DEFAULT_TEMPLATES_DIR, presetsPath }, { fetchImpl, avatarFetchImpl: fetchImpl },
+      { templatesDir: DEFAULT_TEMPLATES_DIR, presetsPath }, { fetchImpl },
     );
     expect(calls.map((url) => url.split("/").pop())).toEqual(["light.png", "dark.png"]);
   });

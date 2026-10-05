@@ -14,9 +14,6 @@
       "fit": "contain",
       "radius": 0,
       "padding": 0,
-      "sources": [
-        "avatar"
-      ],
       "position": {
         "x": 0.5,
         "y": 0.5

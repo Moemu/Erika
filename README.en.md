@@ -138,7 +138,7 @@ Use `**…**` to highlight text in descriptions, such as `?description=An **even
 | `theme` | `light` / `dark`. When omitted, colors follow the illustration background. Explicit themes control the background and text colors. Illustrations blend in or use rounded corners, depending on transparency and background compatibility. |
 | `accent` | `auto` detects an artwork color and adjusts it for readability; `#RRGGBB` uses the exact color (encode `#` as `%23` in URLs). Omit to keep the preset or template accent. |
 | `icon` | `auto` / `avatar` / `builtin`; default: `auto` |
-| `iconPath` | Relative image path within the repository, up to 128 characters |
+| `iconPath` | Relative image path within the repository, up to 128 characters; only applies with `icon=auto` (the default) |
 | `iconFit` | `contain` keeps the full image; `cover` fills the area and crops the image |
 | `iconRound` | `1` enables a circular mask; `0` disables it |
 | `title` | Override the title, up to 25 characters. The layout can display this length in full. |
@@ -146,7 +146,7 @@ Use `**…**` to highlight text in descriptions, such as `?description=An **even
 | `meta` | Comma-separated fields: `full_name`, `stars`, `forks`, `issues`, `release`, `license`, `language`, `last_updated`. The selected template must support them. |
 | `scale` | Output scale from 0.1 to 1; default: 0.5, producing a 1500 × 900 image |
 | `lang` | Error placeholder language: `en` / `zh`; default: `en` |
-| `fresh` | `fresh=1` uses `Cache-Control: no-cache` so image proxies validate with the origin. GitHub data still follows the Provider cache lifetime. |
+| `fresh` | `fresh=1` uses `Cache-Control: no-cache` so image proxies validate with the origin. GitHub data still follows the Provider cache lifetime. Only `1` is accepted. |
 
 Automatic detection ignores transparent pixels, detected backdrops, and neutral colors. It selects a hue by area and saturation, then adjusts brightness for readability. If no suitable color exists, it keeps the preset or template accent. The `X-Banner-Accent` response header reports the final color. CLI commands `render` and `render-live` also accept `--accent auto` or `--accent "#8B65B5"`.
 

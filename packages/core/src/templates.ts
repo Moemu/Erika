@@ -74,7 +74,6 @@ export function loadTemplate(idOrPath: string, templatesDir = DEFAULT_TEMPLATES_
   return resolveLayout({
     ...base,
     ...tpl,
-    capabilities: { ...base.capabilities, ...tpl.capabilities },
     defaults: { ...base.defaults, ...tpl.defaults },
     slots: { ...base.slots, ...tpl.slots },
     themes: { ...base.themes, ...tpl.themes },
@@ -85,11 +84,7 @@ export interface TemplateInfo {
   id: string;
   version: number;
   themes: string[];
-  capabilities: Template["capabilities"];
-  formats: string[];
   canvas: { width: number; height: number };
-  /** icon sources this template is meant for */
-  sources: string[];
   /** metadata fields the template declares (topline + footer) */
   metaFields: string[];
   defaultMetaFields: string[];
@@ -108,10 +103,7 @@ export function listTemplates(templatesDir = DEFAULT_TEMPLATES_DIR): TemplateInf
           id: tpl.id,
           version: tpl.version,
           themes: Object.keys(tpl.themes ?? {}),
-          capabilities: tpl.capabilities,
-          formats: ["webp", "png"],
           canvas: { ...(tpl.canvas ?? { width: 0, height: 0 }) },
-          sources: [...(tpl.slots.icon.sources ?? [])],
           metaFields: declaredMetaFields(tpl.slots.meta),
           defaultMetaFields: defaultMetaFields(tpl.slots.meta),
         });

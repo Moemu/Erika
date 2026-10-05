@@ -436,7 +436,7 @@ export interface RenderInput {
    * Grokbot-style kinds ("repo"/"builtin") may use the template's blend box;
    * anything else (avatars) always lands in the card box, so the designed gap
    * to the text column holds. */
-  iconOverride?: { path?: string; url?: string; buffer?: Buffer; kind?: "repo" | "avatar" | "builtin" };
+  iconOverride?: { path?: string; buffer?: Buffer; kind?: "repo" | "avatar" | "builtin" };
   format?: "png" | "webp";
   webpQuality?: number;
 }
@@ -763,6 +763,3 @@ export async function renderBanner(input: RenderInput): Promise<RenderResult> {
 
   return { buffer, width, height, format, fontUsed: family, accent: colors.accent };
 }
-
-export { buildTitleRuns, fitTitle, wrapDescription } from "./layout.js";
-export { formatNumber } from "./format.js";

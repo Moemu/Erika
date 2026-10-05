@@ -174,7 +174,7 @@ export function ParamPanel({
           <Field label={t("iconSource")} hint={t("avatarHint")}>
             <Select
               value={state.icon ?? ""}
-              onChange={(e) => patch({ icon: e.target.value || null })}
+              onChange={(e) => patch(e.target.value ? { icon: e.target.value, iconPath: "" } : { icon: null })}
               options={[
                 { value: "", label: t("autoIcon") },
                 { value: "builtin", label: t("defaultIcon") },
@@ -235,14 +235,18 @@ export function ParamPanel({
               {t("advanced")}
             </summary>
             <div className="space-y-3 border-t border-ink-700 p-2.5">
-              <Field label={t("iconPath")} hint={t("relativePath")}>
-                <TextInput
-                  value={state.iconPath}
-                  onChange={(e) => patch({ iconPath: e.target.value })}
-                  placeholder="assets/grokbot-icon.webp"
-                  spellCheck={false}
-                />
-              </Field>
+              {/* the API only honors iconPath for icon=auto (default); the field
+                  is hidden for avatar/builtin instead of silently ignored */}
+              {!state.icon && (
+                <Field label={t("iconPath")} hint={t("relativePath")}>
+                  <TextInput
+                    value={state.iconPath}
+                    onChange={(e) => patch({ iconPath: e.target.value })}
+                    placeholder="assets/grokbot-icon.webp"
+                    spellCheck={false}
+                  />
+                </Field>
+              )}
 
               <div className="grid grid-cols-2 gap-2">
                 <Field label={t("iconDisplay")}>

@@ -16,12 +16,11 @@
     "@erika/providers": "workspace:*",
     "@erika/shared": "workspace:*",
     "@hono/node-server": "^1.13.0",
-    "hono": "^4.6.0",
-    "zod": "^3.25.0",
-    "@napi-rs/canvas": "^0.1.68"
+    "hono": "^4.6.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
+    "@napi-rs/canvas": "^0.1.68",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^3.0.0"

@@ -1,7 +1,7 @@
 /** URL-as-state: every playground parameter lives in the query string so any
  * panel configuration is shareable by link. */
 
-import type { ParamState } from "./api.js";
+import { bannerQueryParams, type ParamState } from "./api.js";
 import type { Locale } from "./locale.js";
 
 const KEYS = [
@@ -36,17 +36,7 @@ export function writeStateToUrl(state: ParamState, locale: Locale): void {
   if (state.owner) params.set("owner", state.owner);
   if (state.repo) params.set("repo", state.repo);
   if (state.template) params.set("template", state.template);
-  if (state.theme) params.set("theme", state.theme);
-  if (state.accent) params.set("accent", state.accent);
-  if (state.title) params.set("title", state.title);
-  if (state.description) params.set("description", state.description);
-  if (state.scale != null) params.set("scale", String(state.scale));
-  if (state.icon) params.set("icon", state.icon);
-  if (state.iconPath) params.set("iconPath", state.iconPath);
-  if (state.iconFit) params.set("iconFit", state.iconFit);
-  if (state.iconRound) params.set("iconRound", state.iconRound);
-  if (state.meta !== null) params.set("meta", state.meta);
-  if (state.lang) params.set("lang", state.lang);
+  bannerQueryParams(state).forEach((value, key) => params.set(key, value));
   if (state.scheme !== "dark") params.set("scheme", state.scheme);
   if (state.apiBase) params.set("apiBase", state.apiBase);
   const qs = params.toString();

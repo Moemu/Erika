@@ -19,7 +19,6 @@ function app(imageFetcher?: (url: string) => Promise<Buffer>) {
           },
         };
       },
-      stats: () => ({ snapshots: 0, notFound: 0, transientBackoff: 0 }),
     },
   });
 }

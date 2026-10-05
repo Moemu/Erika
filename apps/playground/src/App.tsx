@@ -15,7 +15,9 @@ const DEFAULT_STATE = {
   repo: "Erika",
   template: null,
   theme: null,
-  accent: null,
+  // default to artwork detection: visitors don't know a preset may tune the
+  // accent, and the preset color is one click away ("跟随预设")
+  accent: "auto" as string | null,
   title: "",
   description: "",
   scale: null,

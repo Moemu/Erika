@@ -156,13 +156,3 @@ export function Tabs({
     </div>
   );
 }
-
-export function SectionTitle({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex items-center gap-2 pt-1">
-      <span className="blossom text-[0.7em]" />
-      <h3 className="text-xs font-medium tracking-wide text-brand-600">{children}</h3>
-      <span className="h-px flex-1 bg-gradient-to-r from-brand-500/30 to-transparent" />
-    </div>
-  );
-}

@@ -22,7 +22,6 @@ function fakeProvider() {
       if (next instanceof Error) throw next;
       return next;
     },
-    stats: () => ({ snapshots: queue.length, notFound: calls, transientBackoff: 0 }),
   };
   return { provider, queue };
 }
@@ -52,7 +51,6 @@ function buildApp(queue: Array<RepoSnapshot | Error>) {
         if (next instanceof Error) throw next;
         return next;
       },
-      stats: () => ({ snapshots: 0, notFound: 0, transientBackoff: 0 }),
     },
     // the icon chain would hit raw.githubusercontent.com; tests serve the local
     // fixture instead, so the repo-icon path is exercised without network
@@ -207,7 +205,7 @@ describe("GET /v1/banner", () => {
     ["avatar", "dark", "en", "png"],
   ])("not-found uses Erika artwork with %s, %s, %s and %s", async (template, theme, lang, format) => {
     queue.push(new NotFoundError("No/Such"), new NotFoundError("No/Such"));
-    const url = `/v1/banner/No/Such/${template}.${format}?theme=${theme}&lang=${lang}&scale=0.2&icon=avatar&iconPath=assets/other.png`;
+    const url = `/v1/banner/No/Such/${template}.${format}?theme=${theme}&lang=${lang}&scale=0.2&icon=avatar`;
     const res = await app.request(url);
     expect(res.status).toBe(200);
     expect(res.headers.get("x-banner-icon")).toBe("builtin");
@@ -253,7 +251,7 @@ describe("GET /v1/banner", () => {
     expect(res.headers.get("cache-control")).toBe("no-cache");
   });
 
-  it("validates params: bad scale / long title / unknown template / unknown theme", async () => {
+  it("validates params: bad scale / long title / unknown template / unknown theme / iconPath+icon / fresh", async () => {
     queue.push(snapshot(9));
     const badScale = await app.request("/v1/banner/Moemu/Erika.webp?scale=2");
     expect(badScale.status).toBe(400);
@@ -271,6 +269,12 @@ describe("GET /v1/banner", () => {
     expect(badTheme.status).toBe(400);
     const badExt = await app.request("/v1/banner/Moemu/Erika.gif");
     expect(badExt.status).toBe(400);
+    const iconPathWithBuiltin = await app.request(
+      "/v1/banner/Moemu/Erika.webp?icon=builtin&iconPath=assets/mine.webp",
+    );
+    expect(iconPathWithBuiltin.status).toBe(400);
+    const badFresh = await app.request("/v1/banner/Moemu/Erika.webp?fresh=0");
+    expect(badFresh.status).toBe(400);
   });
 
   it("zh placeholder message for not-found with lang=zh", async () => {
@@ -288,20 +292,18 @@ describe("GET /v1/banner", () => {
 });
 
 describe("GET /v1/meta", () => {
-  it("lists templates with capabilities", async () => {
+  it("lists templates with their declared metadata fields", async () => {
     const app = buildApp([]);
     const res = await app.request("/v1/meta");
     expect(res.status).toBe(200);
     const meta = (await res.json()) as {
-      templates: Array<{ id: string; capabilities: { metadata: boolean }; sources: string[]; metaFields: string[]; defaultMetaFields: string[] }>;
+      templates: Array<{ id: string; metaFields: string[]; defaultMetaFields: string[] }>;
       metaFields: string[];
     };
     const ids = meta.templates.map((t) => t.id);
     expect(ids).toContain("grokbot");
     expect(ids).toContain("avatar");
     const grokbot = meta.templates.find((t) => t.id === "grokbot")!;
-    expect(grokbot.capabilities.metadata).toBe(true);
-    expect(grokbot.sources).toEqual(["repo", "builtin"]);
     expect(grokbot.metaFields).toEqual(["full_name", "stars", "forks", "issues", "release", "license", "language", "last_updated"]);
     expect(grokbot.defaultMetaFields).toEqual(["full_name", "stars", "forks", "issues", "release"]);
     expect(meta.metaFields).toContain("release");
@@ -389,7 +391,6 @@ describe("review regressions", () => {
             private: false,
           },
         }),
-        stats: () => ({ snapshots: 0, notFound: 0, transientBackoff: 0, pausedForMs: 0 }),
       },
       imageFetcher: async () => Buffer.from("this is not an image"),
       cacheMaxBytes: 64 * 1024 * 1024,

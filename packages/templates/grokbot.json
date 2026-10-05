@@ -2,13 +2,6 @@
   "schemaVersion": 1,
   "id": "grokbot",
   "version": 3,
-  "capabilities": {
-    "autoFit": true,
-    "manualLineBreaks": true,
-    "wordInitialAccent": true,
-    "accentRanges": true,
-    "metadata": true
-  },
   "canvas": {
     "width": 3000,
     "height": 1800
@@ -85,10 +78,6 @@
       "radius": 0,
       "padding": 0,
       "frame": { "padding": 0.04, "radius": 0.04 },
-      "sources": [
-        "repo",
-        "builtin"
-      ],
       "position": {
         "x": 0.5,
         "y": 0.5
