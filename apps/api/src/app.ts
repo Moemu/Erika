@@ -37,7 +37,9 @@ import {
   presetIconPaths,
   repoIconUrlsFor,
   resolveIconChain,
+  validateIconImage,
   type ImageFetcher,
+  type ResolvedIcon,
 } from "@erika/core";
 
 const FORMATS: ImageFormat[] = ["webp", "png"];
@@ -311,13 +313,26 @@ export function createApp(deps: ApiDeps) {
     const iconOrder =
       iconSource === "avatar" ? ["avatar"] : iconSource === "builtin" ? ["builtin"] : ["repo", "builtin"];
     const selectedBuiltinPath = q.theme ? themedBuiltinIconPath : builtinIconPath;
-    const icon = await resolveIconChain(iconOrder, {
-      repoIconUrls,
-      avatarUrl: data.avatarUrl,
-      builtinPath: selectedBuiltinPath,
-      imageFetcher,
-      log,
-    });
+    let icon: ResolvedIcon | null;
+    if (q.iconPath) {
+      try {
+        icon = { kind: "repo", buffer: await validateIconImage(await imageFetcher(repoIconUrls[0])) };
+      } catch (err) {
+        const details = err instanceof Error ? err.message : "Image load failed";
+        log(`explicit iconPath failed (${q.iconPath}): ${details}`);
+        c.header("Cache-Control", "no-store");
+        c.header("X-Banner-Error", "icon-load-failed");
+        return c.json({ error: `Cannot load iconPath "${q.iconPath}"`, details }, 400);
+      }
+    } else {
+      icon = await resolveIconChain(iconOrder, {
+        repoIconUrls,
+        avatarUrl: data.avatarUrl,
+        builtinPath: selectedBuiltinPath,
+        imageFetcher,
+        log,
+      });
+    }
 
     // the release tag is an extra upstream call: fetch it only when the
     // resolved field set displays it
@@ -430,7 +445,7 @@ GET /v1/banner/:owner/:repo/:template.webp</code></pre>
               { name: "description", in: "query", schema: { type: "string", maxLength: LIMITS.descriptionChars } },
               { name: "meta", in: "query", description: `Comma-separated fields: ${META_FIELDS.join(", ")}. Empty string hides all metadata. Omit to use template defaults. last_updated is the UTC code push date.`, schema: { type: "string", example: "license,language,last_updated" } },
               { name: "icon", in: "query", schema: { enum: ["auto", "avatar", "builtin"] } },
-              { name: "iconPath", in: "query", schema: { type: "string", example: "assets/grokbot-icon.webp" } },
+              { name: "iconPath", in: "query", description: "Repository image path. Fetch, decode, or size failures return JSON 400 without fallback.", schema: { type: "string", example: "assets/grokbot-icon.webp" } },
               { name: "iconFit", in: "query", schema: { enum: ["contain", "cover"] } },
               { name: "iconRound", in: "query", schema: { enum: ["0", "1"] } },
               { name: "scale", in: "query", schema: { type: "number", minimum: LIMITS.scaleMin, maximum: LIMITS.scaleMax } },
@@ -440,7 +455,7 @@ GET /v1/banner/:owner/:repo/:template.webp</code></pre>
             responses: {
               "200": { description: "Banner image", content: { "image/webp": {}, "image/png": {} } },
               "304": { description: "Not modified (ETag)" },
-              "400": { description: "Invalid params" },
+              "400": { description: "Invalid params or unavailable explicit iconPath image" },
             },
           },
         },

@@ -138,7 +138,7 @@ Use `**…**` to highlight text in descriptions, such as `?description=An **even
 | `theme` | `light` / `dark`. When omitted, colors follow the illustration background. Explicit themes control the background and text colors. Illustrations blend in or use rounded corners, depending on transparency and background compatibility. |
 | `accent` | `auto` detects an artwork color and adjusts it for readability; `#RRGGBB` uses the exact color (encode `#` as `%23` in URLs). Omit to keep the preset or template accent. |
 | `icon` | `auto` / `avatar` / `builtin`; default: `auto` |
-| `iconPath` | Relative image path within the repository, up to 128 characters; only applies with `icon=auto` (the default) |
+| `iconPath` | Relative image path within the repository, up to 128 characters; only applies with `icon=auto` (the default). Fetch, decode, or size failures return HTTP 400 JSON with the reason, without fallback. |
 | `iconFit` | `contain` keeps the full image; `cover` fills the area and crops the image |
 | `iconRound` | `1` enables a circular mask; `0` disables it |
 | `title` | Override the title, up to 25 characters. The layout can display this length in full. |

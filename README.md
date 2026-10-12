@@ -138,7 +138,7 @@ Grokbot 和 Avatar 模板还支持 `license`、`language`、`last_updated`，可
 | `theme` | `light` / `dark`；省略时根据插画背景自动配色；显式主题决定底色与文字配色，插画按透明度与背景兼容性融合或使用圆角兜底 |
 | `accent` | `auto` 从插画取色并调整明度；`#RRGGBB` 指定颜色且保持原值（URL 中 `#` 写作 `%23`）；省略时沿用预设或模板强调色 |
 | `icon` | `auto` / `avatar` / `builtin`，默认 `auto` |
-| `iconPath` | 仓库内的图片相对路径，最长 128 个字符；仅 `icon=auto`（默认）时有效 |
+| `iconPath` | 仓库内的图片相对路径，最长 128 个字符；仅 `icon=auto`（默认）时有效。下载失败、无法解码或超过图片限制时返回 HTTP 400 JSON，包含失败原因；不回退到内置图 |
 | `iconFit` | `contain` 保留完整图片，`cover` 填满区域并裁切 |
 | `iconRound` | `1` 启用圆形遮罩，`0` 关闭 |
 | `title` | 覆盖标题，最长 25 个字符（版式在该长度下仍完整显示） |

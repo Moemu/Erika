@@ -18,7 +18,7 @@ export function presetIconPaths(preset: Preset | null | undefined, theme?: strin
 }
 
 /** Decode and pixel-cap an image; throws on corrupt bytes or oversized input. */
-async function validateImage(buf: Buffer): Promise<Buffer> {
+export async function validateIconImage(buf: Buffer): Promise<Buffer> {
   const img = await loadImage(buf);
   if (img.width > LIMITS.iconMaxPixels || img.height > LIMITS.iconMaxPixels) {
     throw new Error(`icon exceeds pixel cap: ${img.width}x${img.height} > ${LIMITS.iconMaxPixels}`);
@@ -141,17 +141,17 @@ export async function resolveIconChain(order: string[], source: {
         for (const url of source.repoIconUrls) {
           try {
             const buffer = await source.imageFetcher(url);
-            return { kind: "repo", buffer: await validateImage(buffer) };
+            return { kind: "repo", buffer: await validateIconImage(buffer) };
           } catch (err) {
             source.log?.(`repo icon candidate failed (${url}): ${err instanceof Error ? err.message : err}`);
           }
         }
       }
       if (kind === "avatar" && source.avatarUrl && source.imageFetcher) {
-        return { kind: "avatar", buffer: await validateImage(await source.imageFetcher(source.avatarUrl)) };
+        return { kind: "avatar", buffer: await validateIconImage(await source.imageFetcher(source.avatarUrl)) };
       }
       if (kind === "builtin") {
-        return { kind: "builtin", buffer: await validateImage(readFileSync(source.builtinPath)) };
+        return { kind: "builtin", buffer: await validateIconImage(readFileSync(source.builtinPath)) };
       }
     } catch (err) {
       source.log?.(`icon source "${kind}" failed: ${err instanceof Error ? err.message : err}`);
