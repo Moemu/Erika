@@ -188,6 +188,9 @@ function drawIcon(
   // cover crop focal point (normalized); contain centers by definition
   const fx = display.fit === "cover" ? display.position.x : 0.5;
   const fy = display.fit === "cover" ? display.position.y : 0.5;
+  // Mipmaps preserve thin outlines when artwork is reduced.
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "medium";
   ctx.drawImage(
     img as unknown as Parameters<Ctx["drawImage"]>[0],
     x + (size - dw) * fx,
