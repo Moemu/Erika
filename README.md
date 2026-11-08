@@ -49,7 +49,7 @@ Erika 是一个为 GitHub 仓库生成 Banner 的服务。她把项目插画、�
 
 ```text
 使用 $repo-grokbot-illustration 为 https://github.com/OWNER/REPO 设计项目形象。
-先展示几个方案供我选择，再生成 Grokbot 风格的插画。
+先展示几个方案供我选择，再使用上游页面的提示词生成 Grokbot 风格的插画。
 ```
 
 也可以提供已有角色参考图，或要求生成透明背景版本。选择方案后，说明是否要将图片保存到目标仓库。
