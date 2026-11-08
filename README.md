@@ -45,6 +45,17 @@ Erika 是一个为 GitHub 仓库生成 Banner 的服务。她把项目插画、�
 <details>
 <summary>没有 GrokBot Icon？以下是生成指南</summary>
 
+如果使用 Codex，可以在 Erika 项目中调用内置的 [repo-grokbot-illustration skill](.agents/skills/repo-grokbot-illustration/SKILL.md)。在对话中指定目标仓库，并提供可访问的本地路径或公开仓库地址。例如：
+
+```text
+使用 $repo-grokbot-illustration 为 https://github.com/OWNER/REPO 设计项目形象。
+先展示几个方案供我选择，再生成 Grokbot 风格的插画。
+```
+
+也可以提供已有角色参考图，或要求生成透明背景版本。选择方案后，说明是否要将图片保存到目标仓库。
+
+也可以手动制作插画：
+
 1. 前往 [由 @Multi_Serio_Ai 制作的 Grokbot Icon Studio 提示词页面](https://grokbot-icon-studio.serio-ai.chatgpt.site/) 生成属于你项目的插画。除了网页自带的提示词，你还可以简单介绍一下你项目的用途，甚至上传与该项目/个人账号相关的动漫角色立绘。
 
 2. （可选的）我们推荐再生成一张不带背景的 GrokBot Icon 用于动态主题切换

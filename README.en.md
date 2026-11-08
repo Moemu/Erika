@@ -45,6 +45,17 @@ Start with a GrokBot Icon style image.
 <details>
 <summary>No GrokBot Icon yet? Here is how to create one</summary>
 
+In Codex, use the project’s [repo-grokbot-illustration skill](.agents/skills/repo-grokbot-illustration/SKILL.md). Open the Erika project and provide an accessible local path or public repository URL. For example:
+
+```text
+Use $repo-grokbot-illustration to design a character for https://github.com/OWNER/REPO.
+Show me several concepts to choose from before generating a Grokbot-style illustration.
+```
+
+You can also provide a character reference image or request a transparent version. After choosing a concept, specify whether to save the image in the target repository.
+
+To make an illustration manually:
+
 1. Visit [Grokbot Icon Studio, created by @Multi_Serio_Ai](https://grokbot-icon-studio.serio-ai.chatgpt.site/en), to create an illustration for your project. Alongside the supplied prompt, describe your project or attach an anime character reference associated with your project or personal account.
 
 2. Optionally, generate a version without a background for switching between light and dark themes.
